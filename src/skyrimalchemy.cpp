@@ -1,6 +1,7 @@
 #include "skyrimalchemy.h"
 #include "ui_skyrimalchemy.h"
 #include <QDebug>
+#include <QMessageBox>
 
 SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +19,8 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
             this, SLOT(onActionAddAllMaterialClicked()));
     connect(ui->actionRemoveAllSelectedMaterial, SIGNAL(triggered()),
             this, SLOT(onActionRemoveAllSelectedMaterialClicked()));
+    connect(ui->actionHelp, SIGNAL(triggered()),
+            this, SLOT(onActionHelpClicked()));
     connect(ui->tableAllMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
             this, SLOT(onAllMaterialTableDoubleClicked(const QModelIndex&)));
     connect(ui->tableSelectedMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
@@ -30,9 +33,7 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
 }
 
 SkyrimAlchemy::~SkyrimAlchemy() {
-    if (searchEffectModel) {
-        searchEffectModel->deleteLater();
-    }
+
     if (alchemyRecipeModel) {
         alchemyRecipeModel->deleteLater();
     }
@@ -183,4 +184,19 @@ void SkyrimAlchemy::resizeEvent(QResizeEvent* event) {
 
 void SkyrimAlchemy::onMaterialNameSearchEditReturnPressed() {
     onMaterialSearchBtnClicked();
+}
+
+void SkyrimAlchemy::onActionHelpClicked() {
+    QMessageBox::about(this, "帮助 & 关于",
+        "作者: SmileYik\n"
+        "项目主页: https://github.com/SmileYik/SkyrimAlchemy\n"
+        "使用说明: \n"
+        "在Material面板中会显示出游戏内的所有原料, 双击即可选择它作为"
+        "材料, 并且显示在下方表格中, 同时将会根据下方表格中的原料来计算"
+        "所有可能组成的炼金配方, 这些配方将在Alchemy面板中显示.\n"
+        "如果你想取消掉一些材料, 那么你可以双击下方表格中的材料即可取消"
+        "选择此材料作为原料.\n"
+        "如果你仅想查看包含你所选择的材料的炼金配方, 你可以在Alchemy"
+        "面板中点击此面板中的计算按钮即可."
+    );
 }

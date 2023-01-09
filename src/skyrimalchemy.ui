@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>SkyrimAlchemy</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/res/poition.ico</normaloff>:/res/poition.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -139,6 +143,8 @@
     </property>
     <addaction name="actionAddAllMaterial"/>
     <addaction name="actionRemoveAllSelectedMaterial"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelp"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -159,6 +165,11 @@
   <action name="actionRemoveAllSelectedMaterial">
    <property name="text">
     <string>移除所有材料</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>帮助</string>
    </property>
   </action>
  </widget>

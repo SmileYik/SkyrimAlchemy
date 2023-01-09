@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "material_manager.h"
+#include <QDebug>
 
 MaterialManager::~MaterialManager() {
     // 清除材料及配方
@@ -108,16 +109,19 @@ const AlchemyMaterialList & MaterialManager::getSelectedMaterials() {
 void MaterialManager::calculateContainsRecipes() {
     // 清除之前计算的配方.
     for (auto& re : containsRecipes) {
-        re->deleteLater();
+        if (re) {
+            re->deleteLater();
+        }
     }
     containsRecipes.clear();
 
-    if (selectedMaterials.size() <= 0 && selectedMaterials.size() > 3) {
+    if (selectedMaterials.count() <= 0 && selectedMaterials.count() > 3) {
         return;
     }
-
+    qDebug() << "[MaterialManager] continue calculateContainsRecipes";
     auto allMaterials = AlchemyMaterial::getAlchemyMaterials().values();
     if (selectedMaterials.size() >= 2) {
+        qDebug() << "[MaterialManager] selectedMaterials.size() >= 2";
         // 当材料数量为2及以上时可以以他们三(俩)配置一个配方.
         AlchemyRecipe* basedRecipe = new AlchemyRecipe(selectedMaterials);
         if (basedRecipe->isValidRecipe()) {
@@ -143,7 +147,8 @@ void MaterialManager::calculateContainsRecipes() {
                 }
             }
         }
-    } else {
+    } else if (selectedMaterials.size() == 1) {
+        qDebug() << "[MaterialManager] selectedMaterials.size() == 1";
         // 如果已选择的材料仅仅只有一个, 则遍历所有可能组成二元与三元配方.
         auto m = selectedMaterials[0];
         for (int i = 0; i < allMaterials.count(); ++i) {

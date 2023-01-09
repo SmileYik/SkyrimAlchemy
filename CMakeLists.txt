@@ -7,6 +7,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 # Instruct CMake to create code from Qt designer ui files
 set(CMAKE_AUTOUIC ON)
+# 设置输出目录
+set(EXECUTABLE_OUTPUT_PATH "SkyrimAlchemy/")
+
+file(COPY "${PROJECT_SOURCE_DIR}/resources" DESTINATION "SkyrimAlchemy/")
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)

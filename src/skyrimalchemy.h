@@ -45,6 +45,7 @@ public slots:
     void onPushButtonContainsMaterialClicked();
     void onActionAddAllMaterialClicked();
     void onActionRemoveAllSelectedMaterialClicked();
+    void onActionHelpClicked();
     void onMaterialNameSearchEditReturnPressed();
 };
 
