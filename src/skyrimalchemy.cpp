@@ -8,8 +8,8 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
     materialManager(new MaterialManager) {
     ui->setupUi(this);
 
-    connect(ui->materialEffectSearchEdit, SIGNAL(returnPressed()),
-            this, SLOT(onMaterialEffectSearchEditReturnPressed()));
+    connect(ui->materialNameSearchEdit, SIGNAL(returnPressed()),
+            this, SLOT(onMaterialNameSearchEditReturnPressed()));
     connect(ui->materialSearchBtn, SIGNAL(clicked()),
             this, SLOT(onMaterialSearchBtnClicked()));
     connect(ui->pushButtonContainsMaterial, SIGNAL(clicked()),
