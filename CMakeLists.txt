@@ -14,6 +14,17 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 set(skyrimalchemy_SRC
   src/main.cpp
   src/skyrimalchemy.cpp
+  src/alchemy_effect.cpp
+  src/alchemy_material.cpp
+  src/alchemy_recipe.cpp
+  src/material_manager.cpp
+  src/alchemy_material_model.cpp
+  src/alchemy_effect_model.cpp
+  src/alchemy_recipe_model.cpp
+)
+
+include_directories(
+  build/skyrimalchemy_autogen/include
 )
 
 # Tell CMake to create the helloworld executable
