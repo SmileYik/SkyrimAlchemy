@@ -3,37 +3,60 @@
 
 #include "alchemy_material_model.h"
 #include <QDebug>
+#include <QMap>
+#include <QColor>
 
 AlchemyMaterialModel::AlchemyMaterialModel(
     const AlchemyMaterialList& materials) : materialList(materials) {
-
+    int size = materials.size();
+    while (size > 0) {
+        displayList.push_front(--size);
+    }
 }
 
 AlchemyMaterialModel::AlchemyMaterialModel(
     const QList<AlchemyMaterial*>& materials) {
+    int idx = 0;
     for (const auto* m : materials) {
         materialList << m;
+        displayList << idx++;
     }
 }
 
 
 QVariant AlchemyMaterialModel::data(const QModelIndex& index, int role) const {
-    if (index.row() < 0 || index.row() > rowCount() ||
+    if (index.row() < 0 || index.row() > displayList.count() ||
         index.column() < 0 || index.column() > columnCount()) {
         return QVariant();
     }
+
+
 
     switch (role) {
         case Qt::TextAlignmentRole:
             return QVariant(Qt::AlignCenter);
         case Qt::DisplayRole:
             break;
+        case Qt::BackgroundRole:
+            break;
         default:
             return QVariant();
 
     }
+    // qDebug() << "[AlchemyMaterialModel] [data] displayRow = " << index.row();
+    int displayIdx = displayList[index.row()];
+    // qDebug() << "[AlchemyMaterialModel] [data] displayIdx = " << displayIdx;
+    auto material = materialList[displayIdx];
+    if (!material) {
+        return QVariant();
+    }
 
-    auto material = materialList[index.row()];
+    switch (role) {
+        case Qt::BackgroundRole:
+            return highlightMaterials.contains(material) ?
+                        QVariant(QColor(0x00AA00)) : QVariant();
+    }
+
     switch (index.column()) {
         case 0:
             return QVariant(material->id);
@@ -58,7 +81,7 @@ int AlchemyMaterialModel::columnCount(const QModelIndex& parent) const {
 
 int AlchemyMaterialModel::rowCount(const QModelIndex& parent) const {
     Q_UNUSED(parent);
-    return materialList.count();
+    return displayList.count();
 }
 
 QModelIndex AlchemyMaterialModel::parent(const QModelIndex& child) const {
@@ -85,7 +108,19 @@ QVariant AlchemyMaterialModel::headerData(int section,
 }
 
 void AlchemyMaterialModel::sort(int column, Qt::SortOrder order) {
+    beginResetModel();
     bool flag = order == Qt::SortOrder::AscendingOrder;
+    QMap<const AlchemyMaterial*, int> map;
+    AlchemyMaterialList materialList;
+
+    qDebug() << "[AlchemyMaterialModel] [sort] desplayList count = " << displayList.count();
+    for (int idx : displayList) {
+        qDebug() << "[AlchemyMaterialModel] [sort] desplayList foreach " << idx;
+        auto material = this->materialList[idx];
+        map[material] = idx;
+        materialList << material;
+    }
+
     switch (column) {
         case 0:
             std::sort(materialList.begin(), materialList.end(),
@@ -119,11 +154,72 @@ void AlchemyMaterialModel::sort(int column, Qt::SortOrder order) {
                       });
             break;
     }
+
+    int i = 0;
+    for (auto& m : materialList) {
+        displayList[i++] = map[m];
+    }
+    endResetModel();
 }
 
 const AlchemyMaterial* AlchemyMaterialModel::getAlchemyMaterialByRowNumber(int row) {
     if (row >= 0 && row < rowCount()) {
-        return materialList[row];
+        return materialList[displayList[row]];
     }
     return nullptr;
 }
+
+void AlchemyMaterialModel::search(const QString& name,
+                                  const QString& effectId) {
+    beginResetModel();
+    // beginRemoveRows(QModelIndex(), 0, rowCount() - 1);
+    displayList.clear();
+    // endRemoveRows();
+
+    int size = materialList.count();
+    for (int i = 0; i < size; ++i) {
+        bool picked = true;
+        if (!name.isEmpty() && !materialList[i]->name.isLike(name)) {
+            picked = false;
+        }
+        if (!effectId.isEmpty() &&
+                !materialList[i]->includeEffectId.contains(effectId)) {
+            picked = false;
+        }
+        if (picked) {
+            displayList << i;
+        }
+    }
+    // beginInsertRows(QModelIndex(), 0, displayList.count() - 1);
+    // endInsertRows();
+    endResetModel();
+}
+
+void AlchemyMaterialModel::highlight(const AlchemyMaterial *& material) {
+    beginResetModel();
+    if (!highlightMaterials.contains(material)) {
+        highlightMaterials << material;
+    }
+    endResetModel();
+}
+
+void AlchemyMaterialModel::removeHighlight(const AlchemyMaterial *& material) {
+    beginResetModel();
+    highlightMaterials.removeOne(material);
+    endResetModel();
+}
+
+void AlchemyMaterialModel::resetHighlight() {
+    beginResetModel();
+    highlightMaterials.clear();
+    endResetModel();
+}
+
+void AlchemyMaterialModel::highlightAll() {
+    beginResetModel();
+    highlightMaterials << materialList;
+    endResetModel();
+}
+
+
+

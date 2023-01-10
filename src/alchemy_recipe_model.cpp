@@ -44,7 +44,7 @@ QVariant AlchemyRecipeModel::data(const QModelIndex& index, int role) const {
             idx = index.column() - 1;
             return recipe->getMaterials().size() > idx ?
                         QVariant(recipe->getMaterials()[idx]->name.getTranslatedName()) :
-                        QVariant("None");
+                        QVariant("-");
         case 4:
             return QVariant(recipe->getPrice1());
         case 5:
@@ -104,6 +104,7 @@ QVariant AlchemyRecipeModel::headerData(int section,
 }
 
 void AlchemyRecipeModel::sort(int column, Qt::SortOrder order) {
+    beginResetModel();
     bool flag = order == Qt::SortOrder::AscendingOrder;
     int idx;
     bool isKey;
@@ -173,6 +174,7 @@ void AlchemyRecipeModel::sort(int column, Qt::SortOrder order) {
                       });
             break;
     }
+    endResetModel();
 }
 
 const AlchemyRecipe * AlchemyRecipeModel::getAlchemyRecipeByRowNumber(int row) {

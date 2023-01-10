@@ -3,6 +3,7 @@
 
 #include "material_manager.h"
 #include <QDebug>
+#include <QSet>
 
 MaterialManager::~MaterialManager() {
     // 清除材料及配方
@@ -15,9 +16,9 @@ MaterialManager::~MaterialManager() {
     containsRecipes.clear();
 }
 
-void MaterialManager::addMaterial(const AlchemyMaterial* material) {
+bool MaterialManager::addMaterial(const AlchemyMaterial* material) {
     if (selectedMaterials.contains(material)) {
-        return;
+        return false;
     }
 
     AlchemyRecipeList newRecipes;
@@ -47,10 +48,11 @@ void MaterialManager::addMaterial(const AlchemyMaterial* material) {
     recipes << newRecipes;
     selectedMaterials.append(material);
     newRecipes.clear();
+    return true;
 }
 
-void MaterialManager::addMaterial(const QString& id) {
-    addMaterial(AlchemyMaterial::getAlchemyMaterialById(id));
+bool MaterialManager::addMaterial(const QString& id) {
+    return addMaterial(AlchemyMaterial::getAlchemyMaterialById(id));
 }
 
 void MaterialManager::removeMaterial(const AlchemyMaterial* material) {
@@ -114,40 +116,51 @@ void MaterialManager::calculateContainsRecipes() {
         }
     }
     containsRecipes.clear();
-
     if (selectedMaterials.count() <= 0 && selectedMaterials.count() > 3) {
         return;
     }
-    qDebug() << "[MaterialManager] continue calculateContainsRecipes";
-    auto allMaterials = AlchemyMaterial::getAlchemyMaterials().values();
-    if (selectedMaterials.size() >= 2) {
-        qDebug() << "[MaterialManager] selectedMaterials.size() >= 2";
-        // 当材料数量为2及以上时可以以他们三(俩)配置一个配方.
-        AlchemyRecipe* basedRecipe = new AlchemyRecipe(selectedMaterials);
-        if (basedRecipe->isValidRecipe()) {
-            containsRecipes << basedRecipe;
+    if (selectedMaterials.count() == 3) {
+        AlchemyRecipe* recipe = new AlchemyRecipe(selectedMaterials);
+        if (!recipe->isRedundant()) {
+            containsRecipes << recipe;
         } else {
-            delete basedRecipe;
+            delete recipe;
         }
-        // 当材料数量为2且上面配出来的基础配方有效时,
-        // 以现有配方中的材料和其余所有材料组合成新的三元配方.
-        if (basedRecipe && selectedMaterials.size() == 2) {
-            for (auto& material : allMaterials) {
-                if (selectedMaterials.contains(material)) {
-                    continue;
+        return;
+    }
+
+    auto allMaterials = AlchemyMaterial::getAlchemyMaterials().values();
+    // 搜寻两个材料组成的配方.
+    if (selectedMaterials.count() == 2) {
+        QSet<QString> includeEffects;
+        for (auto& m : selectedMaterials) {
+            for (auto& id : m->includeEffectId) {
+                includeEffects << id;
+            }
+        }
+
+        for (auto& m : allMaterials) {
+            bool flag = false;
+            for (auto& id : m->includeEffectId) {
+                if (includeEffects.contains(id)) {
+                    flag = true;
+                    break;
                 }
-                AlchemyMaterialList list;
-                list << basedRecipe->getMaterials();
-                list << material;
-                AlchemyRecipe* recipe = new AlchemyRecipe(selectedMaterials);
-                if (recipe->isValidRecipe() && recipe->getMaterials().size() > 2) {
+            }
+            if (flag) {
+                AlchemyRecipe* recipe = new AlchemyRecipe(AlchemyMaterialList(selectedMaterials) << m);
+                if (!recipe->isRedundant()) {
                     containsRecipes << recipe;
                 } else {
                     delete recipe;
                 }
             }
         }
-    } else if (selectedMaterials.size() == 1) {
+        return;
+    }
+
+    if (selectedMaterials.count() == 1) {
+        QSet<QString> recipesId;
         qDebug() << "[MaterialManager] selectedMaterials.size() == 1";
         // 如果已选择的材料仅仅只有一个, 则遍历所有可能组成二元与三元配方.
         auto m = selectedMaterials[0];
@@ -157,23 +170,26 @@ void MaterialManager::calculateContainsRecipes() {
             }
             AlchemyMaterialList list = {m, allMaterials[i]};
             AlchemyRecipe* recipe = new AlchemyRecipe(list);
-            if (recipe->isValidRecipe()) {
+            if (!recipe->isRedundant() && !recipesId.contains(recipe->id)) {
                 containsRecipes << recipe;
+                recipesId << recipe->id;
             } else {
                 delete recipe;
             }
-            for (int j = i + 1; j < allMaterials.count(); ++j) {
+            for (int j = 0; j < allMaterials.count(); ++j) {
                 if (allMaterials[j] == m) {
                     continue;
                 }
                 list << allMaterials[j];
+
                 recipe = new AlchemyRecipe(list);
-                if (recipe->isValidRecipe()) {
+                if (!recipe->isRedundant()) {
                     containsRecipes << recipe;
                 } else {
                     delete recipe;
                 }
             }
         }
+        recipesId.clear();
     }
 }

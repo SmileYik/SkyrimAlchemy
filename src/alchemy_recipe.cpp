@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "alchemy_recipe.h"
+#include <QSet>
 
 AlchemyRecipe::AlchemyRecipe(const AlchemyMaterial* material1,
                              const AlchemyMaterial* material2) :
@@ -19,9 +20,12 @@ AlchemyRecipe::AlchemyRecipe(const AlchemyMaterial* material1,
 }
 
 AlchemyRecipe::AlchemyRecipe(const AlchemyMaterialList& materials) {
-    if (materials.size() > 3 || materials.size() <= 1) {
+    int size = materials.size();
+    if ((size > 3 || size <= 1) ||
+        QSet<const AlchemyMaterial*>(materials.begin(), materials.end()).size() != size) {
         return;
     }
+
     this->materials << materials;
     QStringList ids;
     // 混合材料, 获取材料中的效果.
@@ -37,6 +41,8 @@ AlchemyRecipe::AlchemyRecipe(const AlchemyMaterialList& materials) {
         ids << material->id;
     }
     mixedId = ids.join("\n");
+    ids.sort();
+    id = ids.join("+");
 
     AlchemyEffectList needDelete;
     price1 = price2 = 0;
@@ -92,4 +98,27 @@ AlchemyMaterialList AlchemyRecipe::getMaterials() const {
 
 bool AlchemyRecipe::isValidRecipe() const {
     return effects.count() > 0;
+}
+
+bool AlchemyRecipe::isRedundant() const {
+    bool isValid = isValidRecipe();
+    if (isValid && materials.count() == 2) {
+        return false;
+    } else if (!(isValid && materials.count() == 3)) {
+        return true;
+    }
+
+    bool flag = false;
+    for (int i = 0; i < materials.count(); ++i) {
+        for (int j = i + 1; j < materials.count(); ++j) {
+            AlchemyRecipe recipe(materials[i], materials[j]);
+            if (recipe.isValidRecipe()) {
+                if (recipe.getPrice1() == price1) {
+                    flag = true;
+                }
+            }
+            recipe.deleteLater();
+        }
+    }
+    return flag;
 }

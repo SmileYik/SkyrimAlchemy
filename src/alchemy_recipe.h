@@ -25,6 +25,7 @@ private:
      */
     bool isContainsMaterialById(const QString& id) const;
 public:
+    QString id;
     QString mixedId; // 配方中使用到的原材料 id 混合
 
     /**
@@ -75,6 +76,12 @@ public:
      * 判断当前配方是否为一个有效配方
      */
     bool isValidRecipe() const;
+
+    /**
+     * 根据价格1来判断当前配方是否为冗余配方.
+     * 冗余配方指的是三个材料组成的药水价格可以由其中的某两个药水组成.
+     */
+    bool isRedundant() const;
 };
 
 #endif // ALCHEMY_RECIPE_H

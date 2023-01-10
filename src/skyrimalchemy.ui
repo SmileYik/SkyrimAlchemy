@@ -146,7 +146,14 @@
     <addaction name="separator"/>
     <addaction name="actionHelp"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>模式</string>
+    </property>
+    <addaction name="actionMaterialSearchMode"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menu_2"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -170,6 +177,14 @@
   <action name="actionHelp">
    <property name="text">
     <string>帮助</string>
+   </property>
+  </action>
+  <action name="actionMaterialSearchMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>包含材料查询模式</string>
    </property>
   </action>
  </widget>

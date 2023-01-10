@@ -15,9 +15,11 @@ class AlchemyMaterialModel : public QAbstractItemModel {
 
 private:
     AlchemyMaterialList materialList;
+    QList<int> displayList;
     const static int columnSize = 7;
     QStringList const header =
                     {"编号", "名称", "翻译", "效果1", "效果2", "效果3", "效果4"};
+    AlchemyMaterialList highlightMaterials;
 
 public:
     enum Roles {
@@ -46,10 +48,20 @@ public:
 
     virtual void sort(int column, Qt::SortOrder order) override;
 
+    void search(const QString& name = "", const QString& effectId = "");
+
     /**
      * 通过行号来获取一个炼金材料实例.
      */
     const AlchemyMaterial* getAlchemyMaterialByRowNumber(int row);
+
+    void highlight(const AlchemyMaterial*& material);
+
+    void removeHighlight(const AlchemyMaterial*& material);
+
+    void resetHighlight();
+
+    void highlightAll();
 };
 
 #endif // ALCHEMY_MATERIAL_MODEL_H

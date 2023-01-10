@@ -9,6 +9,8 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
     materialManager(new MaterialManager) {
     ui->setupUi(this);
 
+    materialSearchMode = ui->actionMaterialSearchMode->isChecked();
+
     connect(ui->materialNameSearchEdit, SIGNAL(returnPressed()),
             this, SLOT(onMaterialNameSearchEditReturnPressed()));
     connect(ui->materialSearchBtn, SIGNAL(clicked()),
@@ -21,6 +23,8 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
             this, SLOT(onActionRemoveAllSelectedMaterialClicked()));
     connect(ui->actionHelp, SIGNAL(triggered()),
             this, SLOT(onActionHelpClicked()));
+    connect(ui->actionMaterialSearchMode, SIGNAL(triggered()),
+            this, SLOT(onActionMaterialSearchModeClicked()));
     connect(ui->tableAllMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
             this, SLOT(onAllMaterialTableDoubleClicked(const QModelIndex&)));
     connect(ui->tableSelectedMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
@@ -50,40 +54,59 @@ SkyrimAlchemy::~SkyrimAlchemy() {
 
 void SkyrimAlchemy::refreshAllMaterialTable(const QString& searchName,
                                             const QString& searchEffectId) {
-    if (allMaterialModel) {
-        ui->tableAllMaterial->model()->deleteLater();
-        ui->tableAllMaterial->setModel(nullptr);
-        delete allMaterialModel;
-    }
 
-    if (searchName.isEmpty() && searchEffectId.isEmpty()) {
+    if (!allMaterialModel) {
         allMaterialModel = new AlchemyMaterialModel(
             AlchemyMaterial::getAlchemyMaterials().values()
         );
-    } else {
-        auto all = AlchemyMaterial::getAlchemyMaterials().values();
-        AlchemyMaterialList pickedOut;
-        for (const auto& m : all) {
-            bool picked = true;
-            if (!searchName.isEmpty() && !m->name.isLike(searchName)) {
-                picked = false;
-            }
-            if (!searchEffectId.isEmpty() &&
-                !m->includeEffectId.contains(searchEffectId)) {
-                picked = false;
-            }
-            if (picked) {
-                pickedOut << m;
-            }
-        }
-        allMaterialModel = new AlchemyMaterialModel(pickedOut);
+        ui->tableAllMaterial->setModel(allMaterialModel);
+        ui->tableAllMaterial->resizeColumnsToContents();
+        ui->tableAllMaterial->resizeRowsToContents();
     }
-    ui->tableAllMaterial->setModel(allMaterialModel);
-    ui->tableAllMaterial->resizeColumnsToContents();
-    ui->tableAllMaterial->resizeRowsToContents();
+    // ui->tableAllMaterial->setModel(nullptr);
+    allMaterialModel->search(searchName, searchEffectId);
+    // ui->tableAllMaterial->setModel(allMaterialModel);
+    // if (allMaterialModel) {
+    //     ui->tableAllMaterial->model()->deleteLater();
+    //     ui->tableAllMaterial->setModel(nullptr);
+    //     delete allMaterialModel;
+    // }
+
+    // if (searchName.isEmpty() && searchEffectId.isEmpty()) {
+    //     allMaterialModel = new AlchemyMaterialModel(
+    //         AlchemyMaterial::getAlchemyMaterials().values()
+    //     );
+    // } else {
+    //     auto all = AlchemyMaterial::getAlchemyMaterials().values();
+    //     AlchemyMaterialList pickedOut;
+    //     for (const auto& m : all) {
+    //         bool picked = true;
+    //         if (!searchName.isEmpty() && !m->name.isLike(searchName)) {
+    //             picked = false;
+    //         }
+    //         if (!searchEffectId.isEmpty() &&
+    //             !m->includeEffectId.contains(searchEffectId)) {
+    //             picked = false;
+    //         }
+    //         if (picked) {
+    //             pickedOut << m;
+    //         }
+    //     }
+    //     allMaterialModel = new AlchemyMaterialModel(pickedOut);
+    // }
+    // ui->tableAllMaterial->setModel(allMaterialModel);
+    // ui->tableAllMaterial->resizeColumnsToContents();
+    // ui->tableAllMaterial->resizeRowsToContents();
 }
 
 void SkyrimAlchemy::refreshSelectedMaterialTable() {
+    if (materialSearchMode) {
+        refreshRecipeTable(true);
+        ui->tableSelectedMaterial->setModel(alchemyRecipeModel);
+        ui->tableSelectedMaterial->resizeColumnsToContents();
+        ui->tableSelectedMaterial->resizeRowsToContents();
+        return;
+    }
     int currentRow = -1;
     if (selectedMaterialModel) {
         if (ui->tableSelectedMaterial->currentIndex().isValid()) {
@@ -147,7 +170,12 @@ void SkyrimAlchemy::onAllMaterialTableDoubleClicked(const QModelIndex& index) {
         const AlchemyMaterial* material =
                 allMaterialModel->getAlchemyMaterialByRowNumber(index.row());
         if (material) {
-            materialManager->addMaterial(material);
+            if (materialManager->addMaterial(material)) {
+                allMaterialModel->highlight(material);
+            } else {
+                materialManager->removeMaterial(material);
+                allMaterialModel->removeHighlight(material);
+            }
             refreshSelectedMaterialTable();
         }
     }
@@ -159,6 +187,7 @@ void SkyrimAlchemy::onSelectedMaterialTableDoubleClicked(const QModelIndex& inde
                 selectedMaterialModel->getAlchemyMaterialByRowNumber(index.row());
         if (material) {
             materialManager->removeMaterial(material);
+            allMaterialModel->removeHighlight(material);
             refreshSelectedMaterialTable();
         }
     }
@@ -170,11 +199,13 @@ void SkyrimAlchemy::onPushButtonContainsMaterialClicked() {
 
 void SkyrimAlchemy::onActionAddAllMaterialClicked() {
     materialManager->addAllMaterial();
+    allMaterialModel->highlightAll();
     refreshSelectedMaterialTable();
 }
 
 void SkyrimAlchemy::onActionRemoveAllSelectedMaterialClicked() {
     materialManager->clearMaterial();
+    allMaterialModel->resetHighlight();
     refreshSelectedMaterialTable();
 }
 
@@ -184,6 +215,11 @@ void SkyrimAlchemy::resizeEvent(QResizeEvent* event) {
 
 void SkyrimAlchemy::onMaterialNameSearchEditReturnPressed() {
     onMaterialSearchBtnClicked();
+}
+
+void SkyrimAlchemy::onActionMaterialSearchModeClicked() {
+    materialSearchMode = ui->actionMaterialSearchMode->isChecked();
+    refreshSelectedMaterialTable();
 }
 
 void SkyrimAlchemy::onActionHelpClicked() {

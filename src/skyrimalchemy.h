@@ -31,6 +31,7 @@ private:
     QPointer<AlchemyMaterialModel> selectedMaterialModel;
     QPointer<AlchemyEffectModel> searchEffectModel;
     QPointer<AlchemyRecipeModel> alchemyRecipeModel;
+    bool materialSearchMode;
 
 
     void refreshAllMaterialTable(const QString& searchName = "",
@@ -47,6 +48,7 @@ public slots:
     void onActionRemoveAllSelectedMaterialClicked();
     void onActionHelpClicked();
     void onMaterialNameSearchEditReturnPressed();
+    void onActionMaterialSearchModeClicked();
 };
 
 #endif // SKYRIMALCHEMY_H

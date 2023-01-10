@@ -23,14 +23,14 @@ public:
     ~MaterialManager();
 
     /**
-     * 通过材料id来添加一个材料.
+     * 添加一个材料, 如果已有这个材料则返回false.
      */
-    void addMaterial(const QString& id);
+    bool addMaterial(const QString& id);
 
     /**
-     * 添加一个材料
+     * 添加一个材料, 如果已有这个材料则返回false.
      */
-    void addMaterial(const AlchemyMaterial* material);
+    bool addMaterial(const AlchemyMaterial* material);
 
     /**
      * 通过材料id移除一个材料
