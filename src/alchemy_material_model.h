@@ -48,7 +48,8 @@ public:
 
     virtual void sort(int column, Qt::SortOrder order) override;
 
-    void search(const QString& name = "", const QString& effectId = "");
+    void search(const QString& name = "",
+                const QString& effectId = "", bool displayHighlight = false);
 
     /**
      * 通过行号来获取一个炼金材料实例.

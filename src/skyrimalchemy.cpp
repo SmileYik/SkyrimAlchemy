@@ -25,6 +25,8 @@ SkyrimAlchemy::SkyrimAlchemy(QWidget *parent) :
             this, SLOT(onActionHelpClicked()));
     connect(ui->actionMaterialSearchMode, SIGNAL(triggered()),
             this, SLOT(onActionMaterialSearchModeClicked()));
+    connect(ui->checkBoxSelectedMaterial, SIGNAL(stateChanged(int)),
+            this, SLOT(onCheckBoxSelectedMaterialStateChanged(int)));
     connect(ui->tableAllMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
             this, SLOT(onAllMaterialTableDoubleClicked(const QModelIndex&)));
     connect(ui->tableSelectedMaterial, SIGNAL(doubleClicked(const QModelIndex&)),
@@ -64,7 +66,9 @@ void SkyrimAlchemy::refreshAllMaterialTable(const QString& searchName,
         ui->tableAllMaterial->resizeRowsToContents();
     }
     // ui->tableAllMaterial->setModel(nullptr);
-    allMaterialModel->search(searchName, searchEffectId);
+    allMaterialModel->search(searchName, searchEffectId,
+                             ui->checkBoxSelectedMaterial->isChecked());
+    ui->tableAllMaterial->resizeRowsToContents();
     // ui->tableAllMaterial->setModel(allMaterialModel);
     // if (allMaterialModel) {
     //     ui->tableAllMaterial->model()->deleteLater();
@@ -221,6 +225,11 @@ void SkyrimAlchemy::onActionMaterialSearchModeClicked() {
     materialSearchMode = ui->actionMaterialSearchMode->isChecked();
     refreshSelectedMaterialTable();
 }
+
+void SkyrimAlchemy::onCheckBoxSelectedMaterialStateChanged(int state) {
+    refreshAllMaterialTable();
+}
+
 
 void SkyrimAlchemy::onActionHelpClicked() {
     QMessageBox::about(this, "帮助 & 关于",

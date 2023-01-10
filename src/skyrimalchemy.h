@@ -49,6 +49,7 @@ public slots:
     void onActionHelpClicked();
     void onMaterialNameSearchEditReturnPressed();
     void onActionMaterialSearchModeClicked();
+    void onCheckBoxSelectedMaterialStateChanged(int state = 0);
 };
 
 #endif // SKYRIMALCHEMY_H

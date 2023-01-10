@@ -170,7 +170,8 @@ const AlchemyMaterial* AlchemyMaterialModel::getAlchemyMaterialByRowNumber(int r
 }
 
 void AlchemyMaterialModel::search(const QString& name,
-                                  const QString& effectId) {
+                                  const QString& effectId,
+                                  bool displayHighlight) {
     beginResetModel();
     // beginRemoveRows(QModelIndex(), 0, rowCount() - 1);
     displayList.clear();
@@ -184,6 +185,9 @@ void AlchemyMaterialModel::search(const QString& name,
         }
         if (!effectId.isEmpty() &&
                 !materialList[i]->includeEffectId.contains(effectId)) {
+            picked = false;
+        }
+        if (displayHighlight && !highlightMaterials.contains(materialList[i])) {
             picked = false;
         }
         if (picked) {
