@@ -52,7 +52,7 @@ int AlchemyEffect::loadAlchemyEffects() {
         effect->name = list[1];
         effect->price = list[2].toInt();
         for (int i = 4; i < list.size(); ++i) {
-            effect->priceIfContainsMaterial[list[i - 1]] = list[i].toInt();
+            effect->priceIfContainsMaterial[list[i - 1].mid(1)] = list[i].toInt();
         }
         if (addAlchemyEffect(effect)) {
             ++count;
