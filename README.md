@@ -31,7 +31,7 @@ This is a file that stores alchemy effects and their base prices, one alchemy ef
 The attributes of the alchemy effect are separated by ` ` (space).
 
 ```
-effect_id effect_name base_price [+material_id new_base_price]
+effect_id effect_name base_price [+material_id new_base_iprice]
 ```
 
 Among them, the content in `[]` can be added optionally, which means that the basic price of this effect becomes the new basic price after adding the material
@@ -42,7 +42,7 @@ This is a file for storing alchemy materials, one alchemy material per line, and
 open, followed by:
 
 ```
-material_id effect_id1 effect_id2 effect_id3 effect_id4
+material_id effect_id1 effect_d2 effect_id3 effect_id4
 ```
 
 Represents that this material has four effects
