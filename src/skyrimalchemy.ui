@@ -14,8 +14,8 @@
    <string>SkyrimAlchemy</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/res/poition.ico</normaloff>:/res/poition.ico</iconset>
+   <iconset resource="../../../../../../../../home/miskyle/disc/H/Workspace/linuxspace/SkyrimAlchemy/resources/resources.qrc">
+    <normaloff>:/img/skyrimalchemy.ico</normaloff>:/img/skyrimalchemy.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -173,6 +173,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../../../../../home/miskyle/disc/H/Workspace/linuxspace/SkyrimAlchemy/resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

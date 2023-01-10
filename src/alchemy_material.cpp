@@ -6,9 +6,9 @@
 #include <QIODevice>
 #include <QTextStream>
 
-#define ALCHEMY_MATERIAL_FILE "./resources/alchemy_material"
-#define ALCHEMY_MATERIAL_EN_FILE "./resources/alchemy_material_en"
-#define ALCHEMY_MATERIAL_TR_FILE "./resources/alchemy_material_tr"
+#define ALCHEMY_MATERIAL_FILE ":/data/alchemy_material"
+#define ALCHEMY_MATERIAL_EN_FILE ":/data/alchemy_material_en"
+#define ALCHEMY_MATERIAL_TR_FILE ":/data/alchemy_material_tr"
 
 const QString& AlchemyMaterialName::getTranslatedName() const {
     return translatedName;

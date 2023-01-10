@@ -7,13 +7,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 # Instruct CMake to create code from Qt designer ui files
 set(CMAKE_AUTOUIC ON)
-# 设置输出目录
-set(EXECUTABLE_OUTPUT_PATH "SkyrimAlchemy/")
-
-file(COPY "${PROJECT_SOURCE_DIR}/resources" DESTINATION "SkyrimAlchemy/")
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
+
+include_directories(
+  build/skyrimalchemy_autogen/include
+)
+
+set(
+  skyrimalchemy_RCCS
+  resources/resources.qrc
+)
 
 set(skyrimalchemy_SRC
   src/main.cpp
@@ -27,12 +32,14 @@ set(skyrimalchemy_SRC
   src/alchemy_recipe_model.cpp
 )
 
-include_directories(
-  build/skyrimalchemy_autogen/include
-)
+QT5_ADD_RESOURCES(resources_RCC_SRCS ${skyrimalchemy_RCCS})
 
 # Tell CMake to create the helloworld executable
-add_executable(skyrimalchemy ${skyrimalchemy_SRC})
+add_executable(
+  skyrimalchemy
+  ${skyrimalchemy_SRC}
+  ${resources_RCC_SRCS}
+)
 
 # Use the Widgets module from Qt 5.
 target_link_libraries(skyrimalchemy Qt5::Widgets)

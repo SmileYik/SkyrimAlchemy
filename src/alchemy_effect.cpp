@@ -6,7 +6,7 @@
 #include <QIODevice>
 #include <QTextStream>
 
-#define ALCHEMY_EFFECT_PRICE_FILE "./resources/alchemy_effect_price"
+#define ALCHEMY_EFFECT_PRICE_FILE ":/data/alchemy_effect_price"
 
 AlchemyEffect::AlchemyEffect() = default;
 
