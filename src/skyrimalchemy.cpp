@@ -53,7 +53,7 @@ void SkyrimAlchemy::refreshAllMaterialTable(const QString& searchName,
     if (allMaterialModel) {
         ui->tableAllMaterial->model()->deleteLater();
         ui->tableAllMaterial->setModel(nullptr);
-        allMaterialModel->deleteLater();
+        delete allMaterialModel;
     }
 
     if (searchName.isEmpty() && searchEffectId.isEmpty()) {
@@ -91,7 +91,7 @@ void SkyrimAlchemy::refreshSelectedMaterialTable() {
         }
         ui->tableSelectedMaterial->model()->deleteLater();
         ui->tableSelectedMaterial->setModel(nullptr);
-        selectedMaterialModel->deleteLater();
+        delete selectedMaterialModel;
     }
 
     selectedMaterialModel =
@@ -112,7 +112,7 @@ void SkyrimAlchemy::refreshRecipeTable(const bool& containsRecipes) {
     if (alchemyRecipeModel) {
         ui->tableAlchemyResult->model()->deleteLater();
         ui->tableAlchemyResult->setModel(nullptr);
-        alchemyRecipeModel->deleteLater();
+        delete alchemyRecipeModel;
     }
     if (containsRecipes) {
         materialManager->calculateContainsRecipes();

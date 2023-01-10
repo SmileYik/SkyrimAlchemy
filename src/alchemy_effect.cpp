@@ -27,7 +27,7 @@ void AlchemyEffect::clearAlchemyEffects() {
     auto all = loadedAlchemyEffects.values();
     for (auto* effect : all) {
         if (effect) {
-            effect->deleteLater();
+            delete effect;
         }
     }
     loadedAlchemyEffects.clear();

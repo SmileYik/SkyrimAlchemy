@@ -124,7 +124,7 @@ void AlchemyMaterial::clearAlchemyMaterials() {
     auto all = loadedAlchemyMaterials.values();
     for (auto* material : all) {
         if (material) {
-            material->deleteLater();
+            delete material;
         }
     }
     loadedAlchemyMaterials.clear();

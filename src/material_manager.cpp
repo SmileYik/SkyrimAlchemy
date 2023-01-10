@@ -9,8 +9,8 @@ MaterialManager::~MaterialManager() {
     clearMaterial();
 
     // 清除其余配方.
-    for (auto& re : containsRecipes) {
-        re->deleteLater();
+    for (auto& recipe : containsRecipes) {
+        delete recipe;
     }
     containsRecipes.clear();
 }
@@ -27,7 +27,7 @@ void MaterialManager::addMaterial(const AlchemyMaterial* material) {
         if (recipe->isValidRecipe()) {
             newRecipes << recipe;
         } else {
-            recipe->deleteLater();
+            delete recipe;
         }
     }
 
@@ -39,7 +39,7 @@ void MaterialManager::addMaterial(const AlchemyMaterial* material) {
         if (recipe->isValidRecipe()) {
             newRecipes << recipe;
         } else {
-            recipe->deleteLater();
+            delete recipe;
         }
     }
 
@@ -68,7 +68,7 @@ void MaterialManager::removeMaterial(const AlchemyMaterial* material) {
 
     for (auto* recipe : needRemove) {
         if (recipes.removeOne(recipe)) {
-            recipe->deleteLater();
+            delete recipe;
         }
     }
     selectedMaterials.removeOne(material);
@@ -87,7 +87,7 @@ void MaterialManager::addAllMaterial() {
 
 void MaterialManager::clearMaterial() {
     for (auto* recipe : recipes) {
-        recipe->deleteLater();
+        delete recipe;
     }
     recipes.clear();
     selectedMaterials.clear();
@@ -108,9 +108,9 @@ const AlchemyMaterialList & MaterialManager::getSelectedMaterials() {
 
 void MaterialManager::calculateContainsRecipes() {
     // 清除之前计算的配方.
-    for (auto& re : containsRecipes) {
-        if (re) {
-            re->deleteLater();
+    for (auto& recipe : containsRecipes) {
+        if (recipe) {
+            delete recipe;
         }
     }
     containsRecipes.clear();
@@ -127,7 +127,7 @@ void MaterialManager::calculateContainsRecipes() {
         if (basedRecipe->isValidRecipe()) {
             containsRecipes << basedRecipe;
         } else {
-            basedRecipe->deleteLater();
+            delete basedRecipe;
         }
         // 当材料数量为2且上面配出来的基础配方有效时,
         // 以现有配方中的材料和其余所有材料组合成新的三元配方.
@@ -143,7 +143,7 @@ void MaterialManager::calculateContainsRecipes() {
                 if (recipe->isValidRecipe() && recipe->getMaterials().size() > 2) {
                     containsRecipes << recipe;
                 } else {
-                    recipe->deleteLater();
+                    delete recipe;
                 }
             }
         }
@@ -160,7 +160,7 @@ void MaterialManager::calculateContainsRecipes() {
             if (recipe->isValidRecipe()) {
                 containsRecipes << recipe;
             } else {
-                recipe->deleteLater();
+                delete recipe;
             }
             for (int j = i + 1; j < allMaterials.count(); ++j) {
                 if (allMaterials[j] == m) {
@@ -171,7 +171,7 @@ void MaterialManager::calculateContainsRecipes() {
                 if (recipe->isValidRecipe()) {
                     containsRecipes << recipe;
                 } else {
-                    recipe->deleteLater();
+                    delete recipe;
                 }
             }
         }
