@@ -225,5 +225,11 @@ void AlchemyMaterialModel::highlightAll() {
     endResetModel();
 }
 
+int AlchemyMaterialModel::getAlchemyMaterialRow(const AlchemyMaterial* material) {
+    int idx = materialList.indexOf(material);
+    return displayList.indexOf(idx);
+}
+
+
 
 

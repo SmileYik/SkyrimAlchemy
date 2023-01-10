@@ -25,7 +25,7 @@ bool MaterialManager::addMaterial(const AlchemyMaterial* material) {
     // 新添加的材料与原有的材料二元组合成二元配方.
     for (const AlchemyMaterial* m : selectedMaterials) {
         AlchemyRecipe* recipe = new AlchemyRecipe(material, m);
-        if (recipe->isValidRecipe()) {
+        if (!recipe->isRedundant()) {
             newRecipes << recipe;
         } else {
             delete recipe;
@@ -37,7 +37,7 @@ bool MaterialManager::addMaterial(const AlchemyMaterial* material) {
         AlchemyMaterialList materialList(r->getMaterials());
         materialList << material;
         AlchemyRecipe* recipe = new AlchemyRecipe(materialList);
-        if (recipe->isValidRecipe()) {
+        if (!recipe->isRedundant()) {
             newRecipes << recipe;
         } else {
             delete recipe;

@@ -186,6 +186,16 @@ void SkyrimAlchemy::onAllMaterialTableDoubleClicked(const QModelIndex& index) {
 }
 
 void SkyrimAlchemy::onSelectedMaterialTableDoubleClicked(const QModelIndex& index) {
+    if (materialSearchMode) {
+        auto recipe = alchemyRecipeModel->getAlchemyRecipeByRowNumber(index.row());
+        int idx = index.column() - 1;
+        if (recipe->getMaterials().size() > idx) {
+            auto material = recipe->getMaterials()[idx];
+            idx = allMaterialModel->getAlchemyMaterialRow(material);
+            ui->tableAllMaterial->selectRow(idx);
+        }
+        return;
+    }
     if (index.isValid()) {
         const AlchemyMaterial* material =
                 selectedMaterialModel->getAlchemyMaterialByRowNumber(index.row());

@@ -63,6 +63,8 @@ public:
     void resetHighlight();
 
     void highlightAll();
+
+    int getAlchemyMaterialRow(const AlchemyMaterial* material);
 };
 
 #endif // ALCHEMY_MATERIAL_MODEL_H
