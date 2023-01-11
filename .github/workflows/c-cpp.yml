@@ -19,7 +19,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: 5.12.6
+        version: 5.15.7
         target: desktop
     - uses: actions/checkout@v3
     - name: configure
