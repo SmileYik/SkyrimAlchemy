@@ -36,7 +36,7 @@ effect_id effect_name base_price [+material_id new_base_iprice]
 
 Among them, the content in `[]` can be added optionally, which means that the basic price of this effect becomes the new basic price after adding the material
 
-####alchemy_material
+#### alchemy_material
 
 This is a file for storing alchemy materials, one alchemy material per line, and its properties are separated by ` ` (space)
 open, followed by:
@@ -47,7 +47,7 @@ material_id effect_id1 effect_d2 effect_id3 effect_id4
 
 Represents that this material has four effects
 
-####alchemy_material_en
+#### alchemy_material_en
 
 The English name of the material is stored. In the content of each line, each attribute is separated by ` ` (space), in order:
 
