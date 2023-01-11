@@ -105,7 +105,7 @@ QVariant AlchemyRecipeModel::headerData(int section,
 
 void AlchemyRecipeModel::sort(int column, Qt::SortOrder order) {
     beginResetModel();
-    bool flag = order == Qt::SortOrder::AscendingOrder;
+    bool flag = order == Qt::SortOrder::DescendingOrder;
     int idx;
     bool isKey;
     switch (column) {

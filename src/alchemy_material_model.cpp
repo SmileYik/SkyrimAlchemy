@@ -109,7 +109,7 @@ QVariant AlchemyMaterialModel::headerData(int section,
 
 void AlchemyMaterialModel::sort(int column, Qt::SortOrder order) {
     beginResetModel();
-    bool flag = order == Qt::SortOrder::AscendingOrder;
+    bool flag = order == Qt::SortOrder::DescendingOrder;
     QMap<const AlchemyMaterial*, int> map;
     AlchemyMaterialList materialList;
 

@@ -69,6 +69,7 @@ void SkyrimAlchemy::refreshAllMaterialTable(const QString& searchName,
     allMaterialModel->search(searchName, searchEffectId,
                              ui->checkBoxSelectedMaterial->isChecked());
     ui->tableAllMaterial->resizeRowsToContents();
+    ui->tableAllMaterial->sortByColumn(0, Qt::SortOrder::AscendingOrder);
     // ui->tableAllMaterial->setModel(allMaterialModel);
     // if (allMaterialModel) {
     //     ui->tableAllMaterial->model()->deleteLater();
@@ -109,6 +110,7 @@ void SkyrimAlchemy::refreshSelectedMaterialTable() {
         ui->tableSelectedMaterial->setModel(alchemyRecipeModel);
         ui->tableSelectedMaterial->resizeColumnsToContents();
         ui->tableSelectedMaterial->resizeRowsToContents();
+        ui->tableSelectedMaterial->sortByColumn(4, Qt::SortOrder::DescendingOrder);
         return;
     }
     int currentRow = -1;

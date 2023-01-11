@@ -119,14 +119,13 @@ void MaterialManager::calculateContainsRecipes() {
     if (selectedMaterials.count() <= 0 && selectedMaterials.count() > 3) {
         return;
     }
-    if (selectedMaterials.count() == 3) {
+    if (selectedMaterials.count() >= 2) {
         AlchemyRecipe* recipe = new AlchemyRecipe(selectedMaterials);
         if (!recipe->isRedundant()) {
             containsRecipes << recipe;
         } else {
             delete recipe;
         }
-        return;
     }
 
     auto allMaterials = AlchemyMaterial::getAlchemyMaterials().values();
@@ -176,18 +175,20 @@ void MaterialManager::calculateContainsRecipes() {
             } else {
                 delete recipe;
             }
-            for (int j = 0; j < allMaterials.count(); ++j) {
+            for (int j = i + 1; j < allMaterials.count(); ++j) {
                 if (allMaterials[j] == m) {
                     continue;
                 }
                 list << allMaterials[j];
 
                 recipe = new AlchemyRecipe(list);
-                if (!recipe->isRedundant()) {
+                if (!recipe->isRedundant() && !recipesId.contains(recipe->id)) {
                     containsRecipes << recipe;
+                    recipesId << recipe->id;
                 } else {
                     delete recipe;
                 }
+                list.pop_back();
             }
         }
         recipesId.clear();
