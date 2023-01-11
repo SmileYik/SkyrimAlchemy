@@ -26,3 +26,14 @@ jobs:
       run: cmake .
     - name: make
       run: make
+    - name: Create Release and Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        tag_name: ${{ github.ref }}
+        name: Auto build ${{ github.ref }}
+        body: Auto build.
+        draft: false
+        prerelease: true
+        files: |
+          skyrimalchemy
