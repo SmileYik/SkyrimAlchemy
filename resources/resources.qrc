@@ -2,6 +2,9 @@
   <qresource prefix="img">
     <file>skyrimalchemy.ico</file>
   </qresource>
+  <qresource prefix="font">
+    <file>NotoSansCJK-Regular.ttc</file>
+  </qresource>
   <qresource prefix="data">
     <file>alchemy_material</file>
     <file>alchemy_effect_price</file>
