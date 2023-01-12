@@ -8,6 +8,7 @@ You need Qt5 and CMake 2.8.11 or higher
 
 ``` shell
 git clone https://github.com/SmileYik/SkyrimAlchemy.git
+
 cd SkyrimAlchemy
 mkdir build && cd build
 cmake ../
